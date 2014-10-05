@@ -1,0 +1,1 @@
+Simple app for translate texts using Yandex translation API
