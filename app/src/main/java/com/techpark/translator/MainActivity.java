@@ -5,10 +5,13 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.techpark.translator.fragments.LanguagesFragment;
+import com.techpark.translator.fragments.LanguagesListFragment;
+import com.techpark.translator.fragments.TranslateFragment;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements LanguagesListFragment.OnLanguageSelected {
+
+    private TranslateFragment mTranslateFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +19,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.main_activity);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new LanguagesFragment())
+                    .add(R.id.container, new LanguagesListFragment())
                     .commit();
         }
     }
@@ -39,6 +42,14 @@ public class MainActivity extends FragmentActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSelect(int pos) {
+        mTranslateFragment = TranslateFragment.getInstance(pos);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, mTranslateFragment).addToBackStack(null)
+                .commit();
     }
 }
 

@@ -4,4 +4,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/language_name"
+        android:padding="15dp"
+        android:textSize="15sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
 </LinearLayout>

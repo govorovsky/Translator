@@ -27,6 +27,14 @@ public class LanguageList {
         public String toString() {
             return shortcut + ":" + name;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getShortcut() {
+            return shortcut;
+        }
     }
 
     private static ArrayList<LanguageListEntry> mLanguageList = new ArrayList<>();
@@ -44,9 +52,12 @@ public class LanguageList {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            return;
         }
+    }
 
+
+    public static LanguageListEntry getEntry(int pos) {
+        return mLanguageList.get(pos);
     }
 
     public static List<LanguageListEntry> getLanguageList() {

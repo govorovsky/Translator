@@ -8,21 +8,29 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.techpark.translator.services.ApiConstants;
 import com.techpark.translator.services.LanguageListFetcherService;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by andrew on 05.10.14.
  */
 public class SplashActivity extends Activity {
-    private LanguageListReceiver mLanguageListReceiver;
 
+    private LanguageListReceiver mLanguageListReceiver;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("HERERE", "RERRE");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         IntentFilter intentFilter = new IntentFilter(LanguageListFetcherService.LIST_FETCH);
         mLanguageListReceiver = new LanguageListReceiver();
@@ -45,10 +53,14 @@ public class SplashActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Intent activityIntent = new Intent(SplashActivity.this, MainActivity.class);
-
-            SplashActivity.this.startActivity(activityIntent);
-            SplashActivity.this.finish();
+            if (intent.getIntExtra(ApiConstants.RESPONSE_STATUS, 0) < 0) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(context, "Network error", Toast.LENGTH_LONG).show();
+            } else {
+                Intent activityIntent = new Intent(SplashActivity.this, MainActivity.class);
+                SplashActivity.this.startActivity(activityIntent);
+                SplashActivity.this.finish();
+            }
         }
     }
 }
