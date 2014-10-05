@@ -12,5 +12,6 @@
     <string name="translate_str">Translate</string>
     <string name="promt_type_text">Type text to translate...</string>
     <string name="trans_to_promt">Translate to:</string>
+    <string name="select_text">Select text</string>
 
 </resources>

@@ -10,6 +10,9 @@ public class Translation {
     private String translated;
     private int code;
 
+    private Translation() {
+    }
+
     public String getTranslated() {
         return translated;
     }

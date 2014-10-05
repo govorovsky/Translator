@@ -33,6 +33,8 @@ import com.techpark.translator.services.TranslateFetcherService;
 public class TranslateFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private static final String LANG_BUNDLE = "lang";
+    private static final String TO_BUNDLE = "to";
+    private static final String FROM_BUNDLE = "from";
 
     private TextView mTextViewFrom;
     private TextView mTextViewTo;
@@ -64,8 +66,8 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
         super.onViewCreated(view, savedInstanceState);
 
         if (savedInstanceState != null) {
-            currentTranslateFrom = savedInstanceState.getInt("from");
-            currentTranslateTo = savedInstanceState.getInt("to");
+            currentTranslateFrom = savedInstanceState.getInt(FROM_BUNDLE);
+            currentTranslateTo = savedInstanceState.getInt(TO_BUNDLE);
         } else {
             currentTranslateFrom = getArguments().getInt(LANG_BUNDLE);
         }
@@ -113,8 +115,8 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("from", currentTranslateFrom);
-        outState.putInt("to", currentTranslateTo);
+        outState.putInt(FROM_BUNDLE, currentTranslateFrom);
+        outState.putInt(TO_BUNDLE, currentTranslateTo);
         super.onSaveInstanceState(outState);
 
     }
@@ -152,6 +154,7 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
             if (intent.getIntExtra(ApiConstants.RESPONSE_STATUS, 0) < 0) {
                 Toast.makeText(context, "Network error", Toast.LENGTH_LONG).show();
             } else {
+                /*TODO*/
 
             }
         }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.techpark.translator.entities.LanguageList;
+import com.techpark.translator.entities.Translation;
 import com.techpark.translator.network.NetworkUtils;
 
 import java.io.IOException;
@@ -50,10 +51,10 @@ public class TranslateFetcherService extends IntentService {
         try {
             response = NetworkUtils.httpGet(ApiConstants.TRANSLATE_URL, null, urlParams);
             Log.d(LOG_TAG, response);
-            LanguageList.parseList(response);
+            Translation translation = Translation.parseTranslation(response);
 
         } catch (IOException e) {
-//            responseStatus = -1;
+
         }
     }
 }

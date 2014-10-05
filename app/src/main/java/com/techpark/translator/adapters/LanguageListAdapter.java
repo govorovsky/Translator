@@ -30,7 +30,7 @@ public class LanguageListAdapter extends ArrayAdapter<LanguageList.LanguageListE
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-       return  getView(position, convertView, parent);
+        return getView(position, convertView, parent);
     }
 
     @Override
