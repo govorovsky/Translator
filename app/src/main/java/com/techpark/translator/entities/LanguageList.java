@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public class LanguageList {
 
-    public static class LanguageListEntry {
+    public static class LanguageListEntry implements  Comparable<LanguageListEntry>{
         String name;
         String shortcut;
 
@@ -35,6 +36,11 @@ public class LanguageList {
         public String getShortcut() {
             return shortcut;
         }
+
+        @Override
+        public int compareTo(LanguageListEntry another) {
+            return name.compareTo(another.name);
+        }
     }
 
     private static ArrayList<LanguageListEntry> mLanguageList = new ArrayList<>();
@@ -49,6 +55,7 @@ public class LanguageList {
                 String langName = (String) jsonLangs.get(langShortcut);
                 mLanguageList.add(new LanguageListEntry(langName, langShortcut));
             }
+            Collections.sort(mLanguageList);
 
         } catch (JSONException e) {
             e.printStackTrace();

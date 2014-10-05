@@ -2,6 +2,9 @@ package com.techpark.translator.fragments;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,13 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.techpark.translator.MainActivity;
 import com.techpark.translator.R;
+import com.techpark.translator.SplashActivity;
 import com.techpark.translator.adapters.LanguageListAdapter;
 import com.techpark.translator.entities.LanguageList;
+import com.techpark.translator.services.ApiConstants;
+import com.techpark.translator.services.TranslateFetcherService;
 
 /**
  * Created by andrew on 05.10.14.
@@ -25,11 +34,13 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
 
     private static final String LANG_BUNDLE = "lang";
 
-    private TextView mTextViewToTransPromt;
-    private TextView mTextViewTranslatedPromt;
+    private TextView mTextViewFrom;
+    private TextView mTextViewTo;
     private Spinner mSpinner;
     private Button mTranslateButton;
-
+    private ImageButton mSwapButton;
+    private EditText mSourceText;
+    private EditText mTranslatedtext;
 
     private int currentTranslateFrom;
     private int currentTranslateTo;
@@ -52,19 +63,29 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mTextViewTranslatedPromt = (TextView) view.findViewById(R.id.translated_promt);
+        if (savedInstanceState != null) {
+            currentTranslateFrom = savedInstanceState.getInt("from");
+            currentTranslateTo = savedInstanceState.getInt("to");
+        } else {
+            currentTranslateFrom = getArguments().getInt(LANG_BUNDLE);
+        }
+
+        mTextViewTo = (TextView) view.findViewById(R.id.translated_promt);
         mTranslateButton = (Button) view.findViewById(R.id.translate_button);
         mTranslateButton.setOnClickListener(this);
+        mSwapButton = (ImageButton) view.findViewById(R.id.swap_button);
+        mSwapButton.setOnClickListener(this);
 
 
         mSpinner = (Spinner) view.findViewById(R.id.translate_to_spinner);
         mSpinner.setAdapter(new LanguageListAdapter(getActivity(), R.layout.language_item, LanguageList.getLanguageList()));
         mSpinner.setOnItemSelectedListener(this);
+        mSpinner.setSelection(currentTranslateTo);
 
-        currentTranslateFrom = getArguments().getInt(LANG_BUNDLE);
 
-        mTextViewToTransPromt = (TextView) view.findViewById(R.id.to_translate_promt);
-        mTextViewToTransPromt.setText(LanguageList.getEntry(currentTranslateFrom).getName());
+        mTextViewFrom = (TextView) view.findViewById(R.id.to_translate_promt);
+        mTextViewFrom.setText(LanguageList.getEntry(currentTranslateFrom).getName());
+
 
 //        Log.d("LOG_TAG", Integer.toString(currentTranslateFrom));
 //        Log.d("LOG_TAG", Integer.toString(currentTranslateTo));
@@ -81,10 +102,8 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mTextViewTranslatedPromt.setText(LanguageList.getEntry(position).getName());
+        mTextViewTo.setText(LanguageList.getEntry(position).getName());
         currentTranslateTo = position;
-        Log.d("here", Integer.toString(mSpinner.getSelectedItemPosition()));
-//        Log.d("LOG_TAG", Integer.toString(mSpinner.getSelectedItemPosition()));
     }
 
     @Override
@@ -93,11 +112,48 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("from", currentTranslateFrom);
+        outState.putInt("to", currentTranslateTo);
+        super.onSaveInstanceState(outState);
+
+    }
+
+    private void translate() {
+        Intent translateIntent = new Intent(TranslateFetcherService.TRANSLATE_FETCH);
+        translateIntent.putExtra(TranslateFetcherService.SRC_LANGUAGE, currentTranslateFrom);
+        translateIntent.putExtra(TranslateFetcherService.DEST_LANGUAGE, currentTranslateTo);
+        translateIntent.putExtra(TranslateFetcherService.TEXT, mSourceText.getText().toString());
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.translate_button:
 
+
                 break;
+            case R.id.swap_button:
+                mTextViewTo.setText(LanguageList.getEntry(currentTranslateFrom).getName());
+                mTextViewFrom.setText(LanguageList.getEntry(currentTranslateTo).getName());
+                mSpinner.setSelection(currentTranslateFrom);
+                currentTranslateFrom ^= currentTranslateTo;
+                currentTranslateFrom ^= (currentTranslateTo ^= currentTranslateFrom);
+                break;
+        }
+    }
+
+    private class TranslateReceiver extends BroadcastReceiver {
+        TranslateReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getIntExtra(ApiConstants.RESPONSE_STATUS, 0) < 0) {
+                Toast.makeText(context, "Network error", Toast.LENGTH_LONG).show();
+            } else {
+
+            }
         }
     }
 }

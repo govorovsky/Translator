@@ -7,13 +7,35 @@ import org.json.JSONObject;
  * Created by andrew on 05.10.14.
  */
 public class Translation {
-    private int code;
     private String translated;
-    public static void parseTranslation(String json) {
+    private int code;
+
+    public String getTranslated() {
+        return translated;
+    }
+
+    public void setTranslated(String translated) {
+        this.translated = translated;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public static Translation parseTranslation(String json) {
+        Translation translation = new Translation();
         try {
             JSONObject jsonObject = new JSONObject(json);
+            translation.setCode(jsonObject.getInt("code"));
+            translation.setTranslated((String) jsonObject.getJSONArray("text").get(0));
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return translation;
+
     }
 }

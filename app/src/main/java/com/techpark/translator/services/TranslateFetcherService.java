@@ -16,6 +16,8 @@ import java.util.HashMap;
  */
 public class TranslateFetcherService extends IntentService {
 
+    public static final String TRANSLATE_FETCH = "TRANSLATE_FETCH";
+
     private static final String LOG_TAG = TranslateFetcherService.class.getName();
 
     public static final String TEXT = "TEXT";
@@ -53,6 +55,5 @@ public class TranslateFetcherService extends IntentService {
         } catch (IOException e) {
 //            responseStatus = -1;
         }
-
     }
 }

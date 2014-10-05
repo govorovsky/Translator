@@ -42,12 +42,17 @@ public class LanguagesListFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ActionBar actionBar = activity.getActionBar();
+    public void onResume() {
+        super.onResume();
+        ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(R.string.promt_str);
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
         if (activity instanceof OnLanguageSelected) {
             mCallBack = (OnLanguageSelected) activity;
         }

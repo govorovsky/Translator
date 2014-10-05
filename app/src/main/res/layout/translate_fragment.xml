@@ -2,37 +2,38 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    android:background="#ffc4c7c9">
+    android:background="#ffe7eaec"
+    android:padding="10dp">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-<TextView
-    android:id="@+id/select_lang"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/trans_to_promt"
-    android:textSize="23sp"
-    android:layout_marginTop="20dp"
-    />
+
+        <TextView
+            android:id="@+id/select_lang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/trans_to_promt"
+            android:textSize="23sp" />
+
         <Spinner
             android:id="@+id/translate_to_spinner"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:gravity="top"
             android:layout_toRightOf="@+id/select_lang"
-            />
+            android:gravity="top" />
 
         <ImageButton
-            android:src="@drawable/swap1"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
+            android:id="@+id/swap_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#00000000"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
             android:layout_toEndOf="@id/translate_to_spinner"
+            android:background="#00000000"
+            android:src="@drawable/swap1"
             android:text="@string/swap" />
 
         <LinearLayout
@@ -79,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_weight="0"
+                android:gravity="start|bottom"
                 android:scrollbars="vertical" />
 
         </LinearLayout>
