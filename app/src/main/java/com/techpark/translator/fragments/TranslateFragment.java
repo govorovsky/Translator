@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.techpark.translator.MainActivity;
 import com.techpark.translator.R;
-import com.techpark.translator.SplashActivity;
 import com.techpark.translator.adapters.LanguageListAdapter;
 import com.techpark.translator.entities.LanguageList;
 import com.techpark.translator.services.ApiConstants;
@@ -43,6 +43,8 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
     private ImageButton mSwapButton;
     private EditText mSourceText;
     private EditText mTranslatedtext;
+
+    private TranslateReceiver mTranslateReceiver;
 
     private int currentTranslateFrom;
     private int currentTranslateTo;
@@ -89,10 +91,32 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
         mTextViewFrom.setText(LanguageList.getEntry(currentTranslateFrom).getName());
 
 
-//        Log.d("LOG_TAG", Integer.toString(currentTranslateFrom));
-//        Log.d("LOG_TAG", Integer.toString(currentTranslateTo));
+        mSourceText = (EditText) view.findViewById(R.id.text_to_translate);
+        mTranslatedtext = (EditText) view.findViewById(R.id.translated_text);
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Activity activity = getActivity();
+        if (activity != null) {
+            mTranslateReceiver = new TranslateReceiver();
+            LocalBroadcastManager.getInstance(activity).registerReceiver(mTranslateReceiver, new IntentFilter(TranslateFetcherService.TRANSLATE_FETCH));
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("dsds", "RESUMEEEE");
+        Activity activity = getActivity();
+        if (activity != null) {
+            LocalBroadcastManager.getInstance(activity).unregisterReceiver(mTranslateReceiver);
+        }
+
+    }
+
 
     public static TranslateFragment getInstance(int pos) {
         TranslateFragment transfrag = new TranslateFragment();
@@ -122,25 +146,30 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
     }
 
     private void translate() {
-        Intent translateIntent = new Intent(TranslateFetcherService.TRANSLATE_FETCH);
-        translateIntent.putExtra(TranslateFetcherService.SRC_LANGUAGE, currentTranslateFrom);
-        translateIntent.putExtra(TranslateFetcherService.DEST_LANGUAGE, currentTranslateTo);
+        Intent translateIntent = new Intent(getActivity(), TranslateFetcherService.class);
+        translateIntent.putExtra(TranslateFetcherService.SRC_LANGUAGE, LanguageList.getEntry(currentTranslateFrom).getShortcut());
+        translateIntent.putExtra(TranslateFetcherService.DEST_LANGUAGE, LanguageList.getEntry(currentTranslateTo).getShortcut());
         translateIntent.putExtra(TranslateFetcherService.TEXT, mSourceText.getText().toString());
+        getActivity().startService(translateIntent);
+    }
+
+    private void swapLangs() {
+        mTextViewTo.setText(LanguageList.getEntry(currentTranslateFrom).getName());
+        mTextViewFrom.setText(LanguageList.getEntry(currentTranslateTo).getName());
+        mSpinner.setSelection(currentTranslateFrom);
+        currentTranslateFrom ^= currentTranslateTo;
+        currentTranslateFrom ^= (currentTranslateTo ^= currentTranslateFrom);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.translate_button:
-
-
+                translate();
                 break;
+
             case R.id.swap_button:
-                mTextViewTo.setText(LanguageList.getEntry(currentTranslateFrom).getName());
-                mTextViewFrom.setText(LanguageList.getEntry(currentTranslateTo).getName());
-                mSpinner.setSelection(currentTranslateFrom);
-                currentTranslateFrom ^= currentTranslateTo;
-                currentTranslateFrom ^= (currentTranslateTo ^= currentTranslateFrom);
+                swapLangs();
                 break;
         }
     }
@@ -154,8 +183,8 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
             if (intent.getIntExtra(ApiConstants.RESPONSE_STATUS, 0) < 0) {
                 Toast.makeText(context, "Network error", Toast.LENGTH_LONG).show();
             } else {
-                /*TODO*/
-
+                /*TODO error handling*/
+                mTranslatedtext.setText(intent.getStringExtra(TranslateFetcherService.TRANSLATED));
             }
         }
     }

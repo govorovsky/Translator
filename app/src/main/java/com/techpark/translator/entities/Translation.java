@@ -32,6 +32,11 @@ public class Translation {
     public static Translation parseTranslation(String json) {
         Translation translation = new Translation();
         try {
+            if (json == null) {
+                /*request failed */
+                translation.setCode(-1);
+                return translation;
+            }
             JSONObject jsonObject = new JSONObject(json);
             translation.setCode(jsonObject.getInt("code"));
             translation.setTranslated((String) jsonObject.getJSONArray("text").get(0));

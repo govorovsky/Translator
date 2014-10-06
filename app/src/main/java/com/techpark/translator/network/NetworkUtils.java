@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,12 +33,11 @@ public class NetworkUtils {
             StringBuilder builder = new StringBuilder(url);
             builder.append("?");
             for (Map.Entry<String, String> header : urlParams.entrySet()) {
-                builder.append(header.getKey()).append('=').append(header.getValue()).append('&');
+                builder.append(header.getKey()).append('=').append(URLEncoder.encode(header.getValue(), "UTF-8")).append('&');
             }
             builder.deleteCharAt(builder.length() - 1);
             url = builder.toString();
         }
-
         URL link = new URL(url);
         HttpURLConnection urlConnection = (HttpURLConnection) link.openConnection();
         urlConnection.setRequestMethod("GET");
@@ -61,7 +62,7 @@ public class NetworkUtils {
     }
 
     private static String handleInputStream(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         StringBuilder builder = new StringBuilder();
         for (String resp; (resp = bufferedReader.readLine()) != null; builder.append(resp)) ;
         return builder.toString();
