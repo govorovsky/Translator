@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.techpark.translator.entities.LanguageList;
 import com.techpark.translator.services.ApiConstants;
 import com.techpark.translator.services.LanguageListFetcherService;
 
@@ -36,10 +37,19 @@ public class SplashActivity extends Activity {
         mLanguageListReceiver = new LanguageListReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(mLanguageListReceiver, intentFilter);
         if (savedInstanceState == null) {
-            startService(new Intent(this, LanguageListFetcherService.class));
+            if (LanguageList.getLanguageList() == null) {
+                startService(new Intent(this, LanguageListFetcherService.class));
+            } else {
+                launchMainActivity();
+            }
         }
     }
 
+    private void launchMainActivity() {
+        Intent activityIntent = new Intent(SplashActivity.this, MainActivity.class);
+        SplashActivity.this.startActivity(activityIntent);
+        SplashActivity.this.finish();
+    }
 
     @Override
     protected void onDestroy() {
@@ -57,9 +67,7 @@ public class SplashActivity extends Activity {
                 mProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(context, "Network error", Toast.LENGTH_LONG).show();
             } else {
-                Intent activityIntent = new Intent(SplashActivity.this, MainActivity.class);
-                SplashActivity.this.startActivity(activityIntent);
-                SplashActivity.this.finish();
+                launchMainActivity();
             }
         }
     }

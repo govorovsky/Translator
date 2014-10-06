@@ -61,6 +61,5 @@ public class LanguageListFetcherService extends IntentService {
         Intent respIntent = new Intent(LIST_FETCH);
         respIntent.putExtra(ApiConstants.RESPONSE_STATUS, responseStatus);
         LocalBroadcastManager.getInstance(this).sendBroadcast(respIntent);
-        stopSelf(); // we fetch list only once
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class LanguageList {
 
-    public static class LanguageListEntry implements  Comparable<LanguageListEntry>{
+    public static class LanguageListEntry implements Comparable<LanguageListEntry> {
         String name;
         String shortcut;
 
@@ -43,10 +43,11 @@ public class LanguageList {
         }
     }
 
-    private static ArrayList<LanguageListEntry> mLanguageList = new ArrayList<>();
+    private static ArrayList<LanguageListEntry> mLanguageList;
 
     public static void parseList(String json) {
         try {
+            mLanguageList = new ArrayList<>();
             JSONObject jsonObject = new JSONObject(json);
             JSONObject jsonLangs = jsonObject.getJSONObject("langs");
             Iterator<?> lang = jsonLangs.keys();

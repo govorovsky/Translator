@@ -109,7 +109,6 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("dsds", "RESUMEEEE");
         Activity activity = getActivity();
         if (activity != null) {
             LocalBroadcastManager.getInstance(activity).unregisterReceiver(mTranslateReceiver);
