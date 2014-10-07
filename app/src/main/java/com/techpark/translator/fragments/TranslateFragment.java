@@ -27,6 +27,8 @@ import com.techpark.translator.entities.LanguageList;
 import com.techpark.translator.services.ApiConstants;
 import com.techpark.translator.services.TranslateFetcherService;
 
+import java.util.ArrayList;
+
 /**
  * Created by andrew on 05.10.14.
  */
@@ -46,8 +48,14 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
 
     private TranslateReceiver mTranslateReceiver;
 
+    private LanguageListAdapter adapter;
+
     private int currentTranslateFrom;
     private int currentTranslateTo;
+
+
+    private ArrayList<LanguageList.LanguageListEntry> mLangsAvailForTrans;
+    private ArrayList<LanguageList.LanguageListEntry> mLangList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,8 +89,12 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
         mSwapButton.setOnClickListener(this);
 
 
+        mLangsAvailForTrans = LanguageList.getDirectionsForLang(currentTranslateFrom);
+        mLangList = LanguageList.getLanguageList();
+
+        adapter = new LanguageListAdapter(getActivity(), R.layout.language_item, new ArrayList<>(mLangsAvailForTrans));
         mSpinner = (Spinner) view.findViewById(R.id.translate_to_spinner);
-        mSpinner.setAdapter(new LanguageListAdapter(getActivity(), R.layout.language_item, LanguageList.getLanguageList()));
+        mSpinner.setAdapter(adapter);
         mSpinner.setOnItemSelectedListener(this);
         mSpinner.setSelection(currentTranslateTo);
 
@@ -127,7 +139,7 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mTextViewTo.setText(LanguageList.getEntry(position).getName());
+        mTextViewTo.setText(mLangsAvailForTrans.get(position).getName());
         currentTranslateTo = position;
     }
 
@@ -146,18 +158,28 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
 
     private void translate() {
         Intent translateIntent = new Intent(getActivity(), TranslateFetcherService.class);
-        translateIntent.putExtra(TranslateFetcherService.SRC_LANGUAGE, LanguageList.getEntry(currentTranslateFrom).getShortcut());
-        translateIntent.putExtra(TranslateFetcherService.DEST_LANGUAGE, LanguageList.getEntry(currentTranslateTo).getShortcut());
+        translateIntent.putExtra(TranslateFetcherService.SRC_LANGUAGE, mLangList.get(currentTranslateFrom).getShortcut());
+        translateIntent.putExtra(TranslateFetcherService.DEST_LANGUAGE, mLangsAvailForTrans.get(currentTranslateTo).getShortcut());
         translateIntent.putExtra(TranslateFetcherService.TEXT, mSourceText.getText().toString());
         getActivity().startService(translateIntent);
     }
 
     private void swapLangs() {
-        mTextViewTo.setText(LanguageList.getEntry(currentTranslateFrom).getName());
-        mTextViewFrom.setText(LanguageList.getEntry(currentTranslateTo).getName());
-        mSpinner.setSelection(currentTranslateFrom);
-        currentTranslateFrom ^= currentTranslateTo;
-        currentTranslateFrom ^= (currentTranslateTo ^= currentTranslateFrom);
+        LanguageList.LanguageListEntry from = mLangList.get(currentTranslateFrom);
+        LanguageList.LanguageListEntry to = mLangsAvailForTrans.get(currentTranslateTo);
+
+        mTextViewFrom.setText(to.getName());
+        mTextViewTo.setText(from.getName());
+
+        mLangsAvailForTrans = LanguageList.getDirectionsForLang(mLangsAvailForTrans.get(currentTranslateTo).getShortcut()); // update available langs
+
+        currentTranslateFrom = mLangList.indexOf(to);
+        currentTranslateTo = mLangsAvailForTrans.indexOf(from);
+
+        adapter.clear();
+        adapter.addAll(mLangsAvailForTrans);
+        adapter.notifyDataSetChanged();
+        mSpinner.setSelection(currentTranslateTo);
     }
 
     @Override

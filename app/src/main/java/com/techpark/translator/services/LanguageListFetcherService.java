@@ -49,6 +49,7 @@ public class LanguageListFetcherService extends IntentService {
             response = NetworkUtils.httpGet(ApiConstants.LANGUAGE_LIST_URL, null, urlParams);
             Log.d(LOG_TAG, response);
             LanguageList.parseList(response);
+            LanguageList.parseDirections(response);
 
         } catch (IOException e) {
             responseStatus = -1;
