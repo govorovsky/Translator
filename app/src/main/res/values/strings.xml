@@ -4,7 +4,7 @@
     <string name="app_name">Translator</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="loading">loading</string>
+    <string name="loading">loading…</string>
     <string name="promt_str">Select language to translate:</string>
     <string name="swap">Swap</string>
     <string name="text_to_trans">text to translate</string>
@@ -13,5 +13,6 @@
     <string name="promt_type_text">Type text to translate...</string>
     <string name="trans_to_promt">Translate to:</string>
     <string name="select_text">Select text</string>
+    <string name="retry_str">Retry</string>
 
 </resources>

@@ -10,7 +10,9 @@ import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpark.translator.entities.LanguageList;
@@ -26,6 +28,8 @@ public class SplashActivity extends Activity {
 
     private LanguageListReceiver mLanguageListReceiver;
     private ProgressBar mProgressBar;
+    private Button mRetryButton;
+    private TextView mLoadingStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +37,16 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.splash);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mRetryButton = (Button) findViewById(R.id.retry_btn);
+        mLoadingStr = (TextView) findViewById(R.id.loading);
+
 
         IntentFilter intentFilter = new IntentFilter(LanguageListFetcherService.LIST_FETCH);
         mLanguageListReceiver = new LanguageListReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(mLanguageListReceiver, intentFilter);
         if (savedInstanceState == null) {
             if (!LanguageList.isLoaded) {
-                startService(new Intent(this, LanguageListFetcherService.class));
+                startFetchingList();
             } else {
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -49,6 +56,13 @@ public class SplashActivity extends Activity {
                 }, 1000);
             }
         }
+    }
+
+    private void startFetchingList() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mLoadingStr.setVisibility(View.VISIBLE);
+        startService(new Intent(this, LanguageListFetcherService.class));
+
     }
 
     private void launchMainActivity() {
@@ -70,7 +84,16 @@ public class SplashActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getIntExtra(ApiConstants.RESPONSE_STATUS, 0) < 0) {
+                /* we cant fetch list, lets try to retry... */
                 mProgressBar.setVisibility(View.INVISIBLE);
+                mLoadingStr.setVisibility(View.INVISIBLE);
+                mRetryButton.setVisibility(View.VISIBLE);
+                mRetryButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startFetchingList();
+                    }
+                });
                 Toast.makeText(context, "Network error", Toast.LENGTH_LONG).show();
             } else {
                 launchMainActivity();

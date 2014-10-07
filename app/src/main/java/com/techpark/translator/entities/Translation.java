@@ -7,7 +7,7 @@ import org.json.JSONObject;
  * Created by andrew on 05.10.14.
  */
 public class Translation {
-    private String translated;
+    private String translated = "";
     private int code;
 
     private Translation() {
