@@ -31,7 +31,7 @@
         android:layout_centerHorizontal="true"
         android:text="@string/retry_str"
         android:padding="15dp"
-        android:visibility="visible" />
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/loading"

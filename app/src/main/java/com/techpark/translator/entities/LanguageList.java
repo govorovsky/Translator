@@ -46,7 +46,7 @@ public class LanguageList {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null) return false;
+            if (!(o instanceof LanguageListEntry)) return false;
 
             LanguageListEntry entry = (LanguageListEntry) o;
 
