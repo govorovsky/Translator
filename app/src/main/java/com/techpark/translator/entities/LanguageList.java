@@ -32,7 +32,7 @@ public class LanguageList {
 
         @Override
         public String toString() {
-            return shortcut + ":" + name;
+            return name;
         }
 
         public String getName() {

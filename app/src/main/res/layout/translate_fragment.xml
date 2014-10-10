@@ -57,6 +57,13 @@
                 android:layout_height="100dp"
                 android:layout_weight="0"
                 android:gravity="start|bottom"
+                android:paddingBottom="18dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:textColor="#333333"
+                android:textColorHint="#c1c1c1"
+                android:textSize="18sp"
+                android:background="@drawable/rect"
                 android:hint="@string/promt_type_text"
                 android:scrollbars="vertical" />
 
@@ -81,6 +88,12 @@
                 android:layout_height="100dp"
                 android:layout_weight="0"
                 android:gravity="start|bottom"
+                android:textColor="#333333"
+                android:textColorHint="#c1c1c1"
+                android:textSize="18sp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/rect"
                 android:scrollbars="vertical" />
 
         </LinearLayout>

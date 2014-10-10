@@ -82,7 +82,6 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
             currentTranslateFrom = getArguments().getInt(LANG_BUNDLE);
         }
 
-        mTextViewTo = (TextView) view.findViewById(R.id.translated_promt);
         mTranslateButton = (Button) view.findViewById(R.id.translate_button);
         mTranslateButton.setOnClickListener(this);
         mSwapButton = (ImageButton) view.findViewById(R.id.swap_button);
@@ -91,6 +90,9 @@ public class TranslateFragment extends Fragment implements AdapterView.OnItemSel
 
         mLangsAvailForTrans = LanguageList.getDirectionsForLang(currentTranslateFrom);
         mLangList = LanguageList.getLanguageList();
+
+        mTextViewTo = (TextView) view.findViewById(R.id.translated_promt);
+        mTextViewTo.setText(mLangsAvailForTrans.get(currentTranslateTo).getName());
 
         adapter = new LanguageListAdapter(getActivity(), R.layout.language_item, new ArrayList<>(mLangsAvailForTrans));
         mSpinner = (Spinner) view.findViewById(R.id.translate_to_spinner);
